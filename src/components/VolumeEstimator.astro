@@ -1,0 +1,38 @@
+---
+/**
+ * VolumeEstimator.astro — light theme
+ */
+---
+
+<div class="card overflow-hidden">
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center
+              gap-3 px-5 py-4 border-b"
+       style="border-color:#dee3e6">
+    <h3 class="flex items-center gap-2.5 font-headline font-semibold text-[15px]"
+        style="color:#171d1e">
+      <span class="material-symbols-outlined text-[20px]" style="color:#8c5000">bar_chart</span>
+      Estimated Monthly Expenditure
+    </h3>
+    <span class="font-mono text-xs px-3 py-1.5 rounded-full border whitespace-nowrap"
+          style="color:#6d797d; background:#eff4f7; border-color:#dee3e6">
+      Based on&nbsp;
+      <span id="monthlyVolumeDisplay" class="font-bold" style="color:#00687a">30,000</span>
+      &nbsp;calls
+    </span>
+  </div>
+
+  <!-- Bar chart (JS-rendered) -->
+  <div id="chartContainer" class="flex flex-col px-5 py-4 gap-0">
+    <div class="text-center py-10 font-mono text-sm" style="color:#bcc9cd">
+      No data to visualise yet
+    </div>
+  </div>
+
+  <!-- Footer note -->
+  <div class="border-t px-5 py-3" style="border-color:#dee3e6">
+    <p class="text-[11px] font-mono" style="color:#6d797d">
+      Pricing last updated May 2026 · For estimation purposes only · All figures in USD
+    </p>
+  </div>
+</div>

@@ -1,0 +1,72 @@
+---
+/**
+ * PromptInput.astro — light theme
+ */
+---
+
+<div class="card overflow-hidden flex flex-col relative group">
+  <!-- Edit icon watermark -->
+  <div class="absolute top-4 right-4 pointer-events-none transition-colors duration-300"
+       style="color:#dee3e6">
+    <span class="material-symbols-outlined text-2xl group-focus-within:text-[#00687a]/30">
+      edit_document
+    </span>
+  </div>
+
+  <!-- Textarea -->
+  <textarea
+    id="promptInput"
+    rows="10"
+    placeholder="Paste your system prompt or user query here to begin precise token estimation…"
+    class="w-full bg-transparent font-mono text-[14px] leading-relaxed
+           p-5 pr-12 resize-y focus:outline-none
+           placeholder:font-mono"
+    style="color:#171d1e; min-height:200px"
+    aria-label="Prompt text input"
+    spellcheck="false"
+  ></textarea>
+
+  <!-- Live counters footer -->
+  <div class="border-t px-5 py-3 flex items-center justify-between gap-4 flex-wrap"
+       style="background:#eff4f7; border-color:#dee3e6">
+    <div class="flex items-center gap-5">
+
+      <!-- Token count -->
+      <div class="flex flex-col">
+        <span class="text-[9px] uppercase tracking-[0.12em] font-mono mb-0.5"
+              style="color:#6d797d">Tokens</span>
+        <span id="tokenCount"
+              class="font-mono text-xl font-bold leading-none tabular-nums"
+              style="color:#00687a">—</span>
+      </div>
+
+      <div class="w-px h-8" style="background:#dee3e6"></div>
+
+      <!-- Character count -->
+      <div class="flex flex-col">
+        <span class="text-[9px] uppercase tracking-[0.12em] font-mono mb-0.5"
+              style="color:#6d797d">Characters</span>
+        <span id="charCount"
+              class="font-mono text-xl font-bold leading-none tabular-nums"
+              style="color:#171d1e">—</span>
+      </div>
+
+      <div class="w-px h-8 hidden sm:block" style="background:#dee3e6"></div>
+
+      <!-- Est. output tokens -->
+      <div class="flex-col hidden sm:flex">
+        <span class="text-[9px] uppercase tracking-[0.12em] font-mono mb-0.5"
+              style="color:#6d797d">Est. Output</span>
+        <span id="outTokensEst"
+              class="font-mono text-xl font-bold leading-none tabular-nums"
+              style="color:#3d494c">—</span>
+      </div>
+    </div>
+
+    <!-- Status indicator -->
+    <div class="flex items-center gap-2">
+      <span id="statusDot" class="w-2 h-2 rounded-full" style="background:#bcc9cd"></span>
+      <span id="statusText" class="text-[11px] font-mono" style="color:#6d797d">initialising…</span>
+    </div>
+  </div>
+</div>

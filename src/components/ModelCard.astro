@@ -1,0 +1,23 @@
+---
+/**
+ * ModelCard.astro — grid container shell (light theme).
+ * Cards are JS-rendered into #modelsGrid by calculator.js.
+ */
+---
+
+<div
+  id="modelsGrid"
+  class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+  aria-live="polite"
+  aria-label="Model cost cards">
+
+  <!-- Empty state — replaced by JS once tokens > 0 -->
+  <div class="col-span-full flex flex-col items-center justify-center py-20 text-center
+              rounded-xl border border-dashed"
+       style="border-color:#dee3e6; background:#ffffff">
+    <span class="material-symbols-outlined text-5xl mb-4" style="color:#bcc9cd">calculate</span>
+    <p class="font-mono text-sm" style="color:#6d797d">
+      Awaiting input — paste a prompt above to begin
+    </p>
+  </div>
+</div>
