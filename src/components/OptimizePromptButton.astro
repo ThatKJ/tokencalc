@@ -1,0 +1,89 @@
+---
+/**
+ * OptimizePromptButton.astro — Trigger heuristic prompt optimization
+ */
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends HTMLAttributes<'button'> {
+  targetId?: string;
+}
+
+const { targetId = 'promptInput', class: className, ...attrs } = Astro.props;
+---
+
+<button
+  type="button"
+  id="optimizePromptBtn"
+  data-target={targetId}
+  aria-label="Optimize prompt to reduce tokens"
+  disabled
+  class:list={[
+    'optimize-btn group flex items-center gap-1.5 px-3 h-9 rounded-lg transition-all duration-200',
+    'border active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm',
+    className,
+  ]}
+  style="background:var(--s1); border-color:var(--s4); color:var(--t2)"
+  {...attrs}
+>
+  <span class="relative flex items-center justify-center w-4 h-4">
+    <span
+      class="material-symbols-outlined text-[17px] transition-colors optimize-icon group-aria-busy:hidden"
+      style="color:var(--t3); font-variation-settings:'FILL' 0, 'wght' 500"
+    >
+      auto_awesome
+    </span>
+    <svg
+      class="hidden group-aria-busy:block w-full h-full animate-spin"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="3"
+      style="color:var(--primary)"
+    >
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+    </svg>
+  </span>
+  <span
+    class="font-mono text-[10px] uppercase tracking-widest transition-colors font-semibold optimize-label whitespace-nowrap"
+    style="color:var(--t2)"
+  >
+    Optimize Prompt
+  </span>
+</button>
+
+<style>
+  .optimize-btn:hover:not(:disabled) {
+    border-color: var(--primary-border) !important;
+    background: var(--primary-tint) !important;
+  }
+  .optimize-btn:hover:not(:disabled) .optimize-icon {
+    color: var(--primary) !important;
+  }
+  .optimize-btn:hover:not(:disabled) .optimize-label {
+    color: var(--primary) !important;
+  }
+</style>
+
+<script>
+  function syncOptimizeButtonState() {
+    const btn = document.getElementById('optimizePromptBtn') as HTMLButtonElement | null;
+    const input = document.getElementById(
+      btn?.dataset.target || 'promptInput',
+    ) as HTMLTextAreaElement | null;
+    if (!btn || !input) return;
+    btn.disabled = !input.value.trim();
+  }
+
+  function initOptimizeButtonState() {
+    const input = document.getElementById('promptInput') as HTMLTextAreaElement | null;
+    if (!input) return;
+    if (input.getAttribute('data-optimize-bound')) return;
+    input.setAttribute('data-optimize-bound', 'true');
+    input.addEventListener('input', syncOptimizeButtonState);
+    syncOptimizeButtonState();
+  }
+
+  initOptimizeButtonState();
+  document.addEventListener('astro:page-load', initOptimizeButtonState);
+</script>

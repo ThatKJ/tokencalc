@@ -1,0 +1,29 @@
+---
+interface Props {
+  centered?: boolean;
+}
+const { centered = false } = Astro.props;
+---
+<footer class="border-t px-4 sm:px-6 md:px-8 py-8 transition-colors mt-auto w-full"
+        style="background:var(--s2); border-color:var(--s4)">
+  <div class:list={[
+    'max-w-7xl mx-auto flex flex-col items-center gap-6',
+    centered ? 'justify-center text-center' : 'md:flex-row justify-between',
+  ]}>
+    <div class:list={[
+      'flex flex-wrap items-center gap-4 sm:gap-6 font-mono text-[11px] sm:text-xs uppercase tracking-widest justify-center',
+      !centered && 'md:justify-start',
+    ]} style="color:var(--t3)">
+      <a href="/about" class="transition-colors hover:opacity-80" style="color:inherit" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='inherit'">About Us</a>
+      <a href="/privacy-policy" class="transition-colors hover:opacity-80" style="color:inherit" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='inherit'">Privacy Policy</a>
+      <a href="/terms-and-conditions" class="transition-colors hover:opacity-80" style="color:inherit" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='inherit'">Terms & Conditions</a>
+      <a href="/contact" class="transition-colors hover:opacity-80" style="color:inherit" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='inherit'">Contact Us</a>
+    </div>
+    <div class:list={['font-mono text-[11px] text-center', !centered && 'md:text-right']} style="color:var(--t3)">
+      <p>
+        Pricing last updated <span style="color:var(--t2)">June 2026</span> ·
+        For estimation only · Prices may vary
+      </p>
+    </div>
+  </div>
+</footer>

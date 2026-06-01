@@ -1,0 +1,108 @@
+---
+/**
+ * PromptInput.astro — Prompt workspace, theme-aware via CSS vars
+ */
+import PasteButton from './PasteButton.astro';
+import OptimizePromptButton from './OptimizePromptButton.astro';
+import ClearButton from './ClearButton.astro';
+import OptimizeComparison from './OptimizeComparison.astro';
+---
+
+<div class="flex flex-col gap-5 w-full">
+  <!-- ── Header Row ────────────────────────────────────────────────────────── -->
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 px-0.5">
+    <div class="flex flex-col gap-1">
+      <h1 class="text-display tracking-tight leading-tight">
+        Prompt Workspace
+      </h1>
+      <p class="font-mono text-xs sm:text-sm" style="color:var(--t3)">
+        Input text to calculate exact token usage and projected costs across all models.
+      </p>
+    </div>
+
+    <!-- Quick Stats Badges -->
+    <div class="flex items-center gap-2 shrink-0">
+      <div class="flex flex-col items-end group">
+        <span class="text-label mb-1 opacity-80">Tokens</span>
+        <div class="rounded-lg px-3 py-1.5 min-w-[90px] text-center shadow-sm border transition-colors"
+             style="background:var(--s1); border-color:var(--s4)">
+          <span id="headerTokenCount" class="font-mono font-bold tabular-nums text-sm" style="color:var(--primary)">—</span>
+        </div>
+      </div>
+      <div class="flex flex-col items-end group">
+        <span class="text-label mb-1 opacity-80">Output Est</span>
+        <div class="rounded-lg px-3 py-1.5 min-w-[90px] text-center shadow-sm border transition-colors"
+             style="background:var(--s1); border-color:var(--s4)">
+          <span id="headerOutputCount" class="font-mono font-bold tabular-nums text-sm" style="color:var(--t2)">—</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Main Workspace Card ───────────────────────────────────────────────── -->
+  <div class="card rounded-2xl shadow-sm overflow-hidden flex flex-col transition-shadow duration-300 focus-within:shadow-md">
+
+    <!-- Action toolbar (separate row — no overlap with textarea) -->
+    <div
+      class="flex flex-wrap items-center justify-end gap-2 px-4 py-3 border-b shrink-0"
+      style="border-color:var(--s4); background:var(--s2)"
+      role="toolbar"
+      aria-label="Prompt actions"
+    >
+      <PasteButton targetId="promptInput" />
+      <OptimizePromptButton targetId="promptInput" />
+      <ClearButton targetId="promptInput" />
+    </div>
+
+    <!-- Textarea Input Area -->
+    <textarea
+      id="promptInput"
+      class="w-full bg-transparent font-mono text-base leading-relaxed
+             p-6 min-h-[280px] focus:outline-none transition-colors"
+      style="color:var(--t1); caret-color:var(--primary);"
+      placeholder="Paste your system prompt or user query here to begin precise token estimation…"
+      spellcheck="false"
+      aria-label="Prompt text input"
+    ></textarea>
+
+    <!-- ── Metrics Footer Grid ──────────────────────────────────────────────── -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 border-t transition-colors"
+         style="border-color:var(--s4); background:var(--s2)">
+      
+      <!-- Tokens Metric Card -->
+      <div class="metric-cell flex flex-col items-center justify-center p-6 border-b sm:border-b-0 sm:border-r transition-colors group"
+           style="border-color:var(--s4)">
+        <span class="text-label mb-2 transition-colors group-hover:opacity-100" style="color:var(--t3)">Tokens</span>
+        <span id="tokenCount" class="text-3xl font-mono font-bold tabular-nums leading-none" style="color:var(--primary)">—</span>
+      </div>
+
+      <!-- Characters Metric Card -->
+      <div class="metric-cell flex flex-col items-center justify-center p-6 border-b sm:border-b-0 sm:border-r transition-colors group"
+           style="border-color:var(--s4)">
+        <span class="text-label mb-2 transition-colors" style="color:var(--t3)">Characters</span>
+        <span id="charCount" class="text-3xl font-mono font-bold tabular-nums leading-none" style="color:var(--t1)">—</span>
+      </div>
+
+      <!-- Output Est Metric Card -->
+      <div class="metric-cell flex flex-col items-center justify-center p-6 transition-colors group">
+        <span class="text-label mb-2 transition-colors" style="color:var(--t3)">Output Est</span>
+        <span id="outTokensEst" class="text-3xl font-mono font-bold tabular-nums leading-none" style="color:var(--t2)">—</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Optimize comparison (shown after running Optimize Prompt) -->
+  <OptimizeComparison />
+</div>
+
+<style>
+  /* Placeholder colour respects dark mode via CSS var */
+  #promptInput::placeholder {
+    color: var(--t4);
+    font-family: var(--f-body);
+  }
+  textarea {
+    resize: vertical;
+  }
+</style>

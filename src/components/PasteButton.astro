@@ -1,0 +1,107 @@
+---
+/**
+ * PasteButton.astro — Theme-aware action button
+ */
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends HTMLAttributes<'button'> {
+  targetId?: string;
+}
+
+const { targetId = 'promptInput', class: className, ...attrs } = Astro.props;
+---
+
+<button
+  type="button"
+  data-target={targetId}
+  aria-label="Paste text from clipboard"
+  class:list={[
+    "paste-btn group flex items-center gap-1.5 px-3 h-9 rounded-lg transition-all duration-200",
+    "border active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm",
+    className
+  ]}
+  style="background:var(--s1); border-color:var(--s4); color:var(--t2)"
+  {...attrs}
+>
+  <span class="relative flex items-center justify-center w-4 h-4">
+    <!-- Clipboard Icon -->
+    <svg class="w-full h-full transition-colors paste-icon group-aria-busy:hidden" 
+         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"
+         style="color:var(--t3)">
+      <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+      <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+    </svg>
+    <!-- Spinner -->
+    <svg class="hidden group-aria-busy:block w-full h-full animate-spin" 
+         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+         style="color:var(--primary)">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+    </svg>
+  </span>
+  <span class="font-mono text-[10px] uppercase tracking-widest transition-colors font-semibold paste-label"
+        style="color:var(--t2)">
+    Paste
+  </span>
+</button>
+
+<style>
+  .paste-btn:hover {
+    border-color: var(--primary-border) !important;
+    background: var(--primary-tint) !important;
+  }
+  .paste-btn:hover .paste-icon { color: var(--primary) !important; }
+  .paste-btn:hover .paste-label { color: var(--primary) !important; }
+</style>
+
+<script>
+  import { toast } from '../scripts/toast';
+
+  function initPasteButtons() {
+    const buttons = document.querySelectorAll('.paste-btn');
+    
+    buttons.forEach(btn => {
+      if (btn.getAttribute('data-bound')) return;
+      btn.setAttribute('data-bound', 'true');
+
+      btn.addEventListener('click', async () => {
+        const targetId = (btn as HTMLElement).dataset.target;
+        const target = document.getElementById(targetId || '') as HTMLTextAreaElement | HTMLInputElement;
+
+        if (!target) return;
+
+        btn.setAttribute('aria-busy', 'true');
+        (btn as HTMLButtonElement).disabled = true;
+
+        try {
+          const text = await navigator.clipboard.readText();
+          if (!text) {
+            toast.info('Clipboard is empty');
+            return;
+          }
+
+          const start = target.selectionStart || 0;
+          const end = target.selectionEnd || 0;
+          const val = target.value;
+          
+          target.value = val.substring(0, start) + text + val.substring(end);
+          target.dispatchEvent(new Event('input', { bubbles: true }));
+          
+          toast.success(`Pasted ${text.length.toLocaleString()} characters`);
+          target.focus();
+          
+          const newPos = start + text.length;
+          target.setSelectionRange(newPos, newPos);
+        } catch (err) {
+          toast.error('Clipboard access denied');
+        } finally {
+          btn.setAttribute('aria-busy', 'false');
+          (btn as HTMLButtonElement).disabled = false;
+        }
+      });
+    });
+  }
+
+  initPasteButtons();
+  document.addEventListener('astro:page-load', initPasteButtons);
+</script>

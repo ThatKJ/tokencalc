@@ -1,0 +1,75 @@
+---
+// PageLayout.astro
+import MainLayout from './MainLayout.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<MainLayout title={title} description={description}>
+  <Nav />
+  
+  <main class="flex flex-col flex-grow min-h-screen pt-[72px] sm:pt-[80px] pb-16 transition-colors" style="background:var(--s0)">
+    <!-- Decorative background blur -->
+    <div class="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-[400px] opacity-10 pointer-events-none z-0"
+         style="background: radial-gradient(circle, var(--primary) 0%, transparent 70%); filter: blur(80px);"></div>
+         
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 mt-12 relative z-10">
+      <div class="p-8 sm:p-12 rounded-3xl border shadow-lg" style="background:var(--s1); border-color:var(--s4);">
+        <div class="prose prose-invert max-w-none text-base sm:text-lg leading-relaxed space-y-6" style="color:var(--t2)">
+          <!-- We style the markdown-like content using a wrapper since we don't have tailwind typography installed -->
+          <style is:global>
+            .page-content h1 {
+              font-size: 2.25rem;
+              font-weight: 700;
+              color: var(--t1);
+              margin-bottom: 2rem;
+              letter-spacing: -0.02em;
+            }
+            .page-content h2 {
+              font-size: 1.5rem;
+              font-weight: 600;
+              color: var(--t1);
+              margin-top: 2rem;
+              margin-bottom: 1rem;
+            }
+            .page-content p {
+              margin-bottom: 1.25rem;
+            }
+            .page-content ul {
+              list-style-type: disc;
+              padding-left: 1.5rem;
+              margin-bottom: 1.25rem;
+            }
+            .page-content li {
+              margin-bottom: 0.5rem;
+            }
+            .page-content a {
+              color: var(--primary);
+              text-decoration: underline;
+            }
+            .page-content code {
+              font-family: ui-monospace, monospace;
+              font-size: 0.9em;
+              padding: 0.15em 0.4em;
+              border-radius: 0.25rem;
+              background: var(--s2);
+            }
+          </style>
+          
+          <div class="page-content">
+            <slot />
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</MainLayout>

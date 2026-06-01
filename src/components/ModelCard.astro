@@ -1,0 +1,26 @@
+---
+/**
+ * ModelCard.astro — Grid container shell (mobile-first)
+ * Cards are JS-rendered into #modelsGrid by calculator.js.
+ * - 1 column on mobile (< 768px)
+ * - 2 columns on tablet (≥ 768px)
+ * - 3 columns on desktop (≥ 1024px)
+ */
+---
+
+<div
+  id="modelsGrid"
+  class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4"
+  aria-live="polite"
+  aria-label="Model cost cards">
+
+  <!-- Empty state — replaced by JS once tokens > 0 -->
+  <div class="col-span-full flex flex-col items-center justify-center py-14 sm:py-20 text-center
+              rounded-xl border border-dashed px-4 transition-colors"
+       style="border-color:var(--s4); background:var(--s1)">
+    <span class="material-symbols-outlined text-4xl sm:text-5xl mb-3 sm:mb-4" style="color:var(--s5)">calculate</span>
+    <p class="font-mono text-xs sm:text-sm" style="color:var(--t3)">
+      Awaiting input — paste a prompt above to begin
+    </p>
+  </div>
+</div>

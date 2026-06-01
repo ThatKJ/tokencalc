@@ -1,0 +1,77 @@
+---
+/**
+ * Controls.astro — Mobile-first controls (slider + calls), theme-aware
+ */
+---
+
+<div class="card p-4 sm:p-5 flex flex-col md:flex-row gap-5 md:gap-6 md:items-center">
+
+  <!-- Output Multiplier Slider -->
+  <div class="flex-1 flex flex-col gap-3 min-w-0">
+    <div class="flex items-center justify-between gap-2">
+      <label
+        for="outputMultiplier"
+        class="flex items-center gap-2 text-label"
+        style="color:var(--t2)">
+        <span class="material-symbols-outlined text-[17px]" style="color:var(--t3)">output</span>
+        Output Multiplier
+      </label>
+      <span id="multiplierValue"
+            class="font-mono text-sm font-bold px-2.5 py-0.5 rounded-full border shrink-0"
+            style="color:var(--primary); background:var(--primary-tint); border-color:var(--primary-border)">
+        2.0x
+      </span>
+    </div>
+
+    <input
+      id="outputMultiplier"
+      type="range"
+      min="0.5"
+      max="4.0"
+      step="0.1"
+      value="2.0"
+      aria-label="Output token multiplier"
+      class="w-full"
+    />
+
+    <p class="text-caption" style="color:var(--t3)">
+      Estimated output tokens relative to input. Default: 2.0×
+    </p>
+  </div>
+
+  <!-- Divider -->
+  <div class="hidden md:block w-px self-stretch" style="background:var(--s4)"></div>
+  <div class="md:hidden h-px w-full" style="background:var(--s4)"></div>
+
+  <!-- Daily Calls Volume -->
+  <div class="flex-1 flex flex-col gap-3 min-w-0">
+    <label
+      for="dailyCalls"
+      class="flex items-center gap-2 text-label"
+      style="color:var(--t2)">
+      <span class="material-symbols-outlined text-[17px]" style="color:var(--t3)">all_inclusive</span>
+      Daily Calls Volume
+    </label>
+
+    <div class="relative">
+      <span class="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none">
+        <span class="material-symbols-outlined text-[17px]" style="color:var(--t3)">tag</span>
+      </span>
+      <input
+        id="dailyCalls"
+        type="number"
+        inputmode="numeric"
+        min="1"
+        value="1000"
+        aria-label="Number of API calls per day"
+        class="w-full rounded-lg pl-9 pr-4 py-2.5 font-mono text-sm
+               border transition-colors duration-200"
+        style="background:var(--s1); border-color:var(--s5); color:var(--t1); min-height:44px"
+      />
+    </div>
+
+    <p class="text-caption" style="color:var(--t3)">
+      Used for monthly projection charts. (30-day month)
+    </p>
+  </div>
+</div>

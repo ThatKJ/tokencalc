@@ -1,0 +1,74 @@
+---
+/**
+ * ClearButton.astro — Theme-aware action button
+ */
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends HTMLAttributes<'button'> {
+  targetId?: string;
+}
+
+const { targetId = 'promptInput', class: className, ...attrs } = Astro.props;
+---
+
+<button
+  type="button"
+  data-target={targetId}
+  aria-label="Clear text input"
+  class:list={[
+    "clear-btn group flex items-center gap-1.5 px-3 h-9 rounded-lg transition-all duration-200",
+    "border active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm",
+    className
+  ]}
+  style="background:var(--s1); border-color:var(--s4); color:var(--t2)"
+  {...attrs}
+>
+  <span class="relative flex items-center justify-center w-3.5 h-3.5">
+    <svg class="w-full h-full transition-colors clear-icon" 
+         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+         style="color:var(--t3)">
+      <path d="M18 6L6 18M6 6l12 12"></path>
+    </svg>
+  </span>
+  <span class="font-mono text-[10px] uppercase tracking-widest transition-colors font-semibold clear-label"
+        style="color:var(--t2)">
+    Clear
+  </span>
+</button>
+
+<style>
+  .clear-btn:hover {
+    border-color: rgba(239, 68, 68, 0.5) !important;
+    background: rgba(239, 68, 68, 0.06) !important;
+  }
+  .clear-btn:hover .clear-icon { color: #ef4444 !important; }
+  .clear-btn:hover .clear-label { color: #ef4444 !important; }
+  .dark .clear-btn:hover {
+    background: rgba(239, 68, 68, 0.1) !important;
+  }
+</style>
+
+<script>
+  function initClearButtons() {
+    const buttons = document.querySelectorAll('.clear-btn');
+    
+    buttons.forEach(btn => {
+      if (btn.getAttribute('data-bound')) return;
+      btn.setAttribute('data-bound', 'true');
+
+      btn.addEventListener('click', () => {
+        const targetId = (btn as HTMLElement).dataset.target;
+        const target = document.getElementById(targetId || '') as HTMLTextAreaElement | HTMLInputElement;
+
+        if (target) {
+          target.value = '';
+          target.dispatchEvent(new Event('input', { bubbles: true }));
+          target.focus();
+        }
+      });
+    });
+  }
+
+  initClearButtons();
+  document.addEventListener('astro:page-load', initClearButtons);
+</script>

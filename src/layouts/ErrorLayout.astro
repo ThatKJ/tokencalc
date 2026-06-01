@@ -1,0 +1,62 @@
+---
+import MainLayout from './MainLayout.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  code: number;
+  title: string;
+  heading: string;
+  message: string;
+  icon?: string;
+}
+
+const { code, title, heading, message, icon = 'error_outline' } = Astro.props;
+const description = `${code} — ${heading}. ${message}`;
+---
+
+<MainLayout title={title} description={description} noindex>
+  <div class="flex flex-col min-h-screen w-full">
+    <Nav />
+
+    <main class="flex-1 w-full flex items-center justify-center px-4 sm:px-6 md:px-8 pt-[72px] sm:pt-[80px] pb-12 relative"
+          style="background:var(--s0)">
+      <div class="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-[400px] opacity-10 pointer-events-none z-0"
+           style="background: radial-gradient(circle, var(--primary) 0%, transparent 70%); filter: blur(80px);"></div>
+
+      <div class="relative z-10 w-full max-w-lg mx-auto flex flex-col items-center justify-center text-center">
+        <div class="w-full p-8 sm:p-12 rounded-3xl border shadow-lg flex flex-col items-center"
+             style="background:var(--s1); border-color:var(--s4)">
+          <p class="font-mono text-[11px] uppercase tracking-[0.2em] mb-4 text-center" style="color:var(--t3)">
+            Error {code}
+          </p>
+          <div class="w-16 h-16 mb-6 rounded-2xl flex items-center justify-center border shrink-0"
+               style="background:var(--s2); border-color:var(--s4); color:var(--primary)">
+            <span class="material-symbols-outlined text-[32px]">{icon}</span>
+          </div>
+          <h1 class="text-3xl sm:text-4xl font-bold mb-4 tracking-tight text-center w-full" style="color:var(--t1)">
+            {heading}
+          </h1>
+          <p class="text-base sm:text-lg leading-relaxed mb-8 text-center max-w-md mx-auto" style="color:var(--t2)">
+            {message}
+          </p>
+          <div class="flex flex-col sm:flex-row items-center justify-center gap-3 w-full">
+            <a href="/"
+               class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold text-white transition-all hover:scale-105 active:scale-95"
+               style="background:var(--primary)">
+              <span class="material-symbols-outlined text-[20px]">home</span>
+              Back to Calculator
+            </a>
+            <a href="/contact"
+               class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold border transition-all"
+               style="color:var(--t2); border-color:var(--s4); background:var(--s2)">
+              Contact Us
+            </a>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <Footer centered />
+  </div>
+</MainLayout>

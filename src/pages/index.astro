@@ -1,0 +1,321 @@
+---
+/**
+ * index.astro — Single-page entry point (light default, dark toggle)
+ */
+import MainLayout      from '../layouts/MainLayout.astro';
+import PromptInput     from '../components/PromptInput.astro';
+import Controls        from '../components/Controls.astro';
+import ModelCard       from '../components/ModelCard.astro';
+import VolumeEstimator from '../components/VolumeEstimator.astro';
+import Nav             from '../components/Nav.astro';
+import Footer          from '../components/Footer.astro';
+---
+
+<MainLayout
+  title="TokenCalc AI | AI Prompt Token Cost Calculator"
+  description="Calculate AI API costs instantly with our free AI prompt token cost calculator. Estimate GPT-4, Claude 3.5, and LLM pricing with precise token counting."
+>
+
+  <Nav />
+
+  <!-- ── Page body ──────────────────────────────────────────────────── -->
+  <div class="flex flex-col flex-grow pt-[72px] sm:pt-[80px]">
+
+    <!-- ── Hero / Workspace Section ───────────────────────────────── -->
+    <section id="workspace"
+             class="border-b py-8 sm:py-10 px-3 sm:px-6 md:px-8 transition-colors"
+             style="background:var(--s2); border-color:var(--s4)">
+      <div class="max-w-7xl mx-auto flex flex-col gap-5 sm:gap-6">
+
+        <!-- Prompt Workspace (Includes Header, Textarea, and Metrics) -->
+        <PromptInput />
+
+        <!-- Slider + calls controls -->
+        <Controls />
+      </div>
+    </section>
+
+    <!-- ── Projections Section ─────────────────────────────────────── -->
+    <section class="py-8 sm:py-10 px-3 sm:px-6 md:px-8 flex-grow transition-colors"
+             style="background:var(--s0)">
+      <div class="max-w-7xl mx-auto flex flex-col gap-6 sm:gap-8">
+
+        <!-- Inference cost projections header -->
+        <div class="flex items-center gap-3">
+          <span class="w-8 h-8 rounded-lg flex items-center justify-center border shrink-0 transition-colors"
+                style="background:var(--s1); border-color:var(--s4)">
+            <span class="material-symbols-outlined text-[18px]" style="color:var(--primary)">data_usage</span>
+          </span>
+          <h2 class="text-headline">
+            Inference Cost Projections
+          </h2>
+        </div>
+
+        <!-- Model cards grid (populated by JS) -->
+        <ModelCard />
+
+        <!-- Volume / bar chart -->
+        <div id="volume" class="mt-8 sm:mt-12 pt-8 sm:pt-12 border-t transition-colors flex flex-col gap-6 sm:gap-8" style="border-color:var(--s4)">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div class="flex items-center gap-3">
+              <span class="w-8 h-8 rounded-lg flex items-center justify-center border shrink-0 transition-colors"
+                    style="background:var(--s1); border-color:var(--s4)">
+                <span class="material-symbols-outlined text-[18px]" style="color:var(--amber)">bar_chart</span>
+              </span>
+              <h2 class="text-headline">
+                Monthly Volume Estimator
+              </h2>
+            </div>
+            <span class="font-mono text-xs px-3 py-1.5 rounded-full border whitespace-nowrap transition-colors"
+                  style="color:var(--t3); background:var(--s1); border-color:var(--s4)">
+              Based on&nbsp;
+              <span id="monthlyVolumeDisplay" class="font-bold" style="color:var(--primary)">30,000</span>
+              &nbsp;calls
+            </span>
+          </div>
+          <VolumeEstimator />
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── SEO Article Section ─────────────────────────────────────── -->
+    <section class="py-16 sm:py-24 px-4 sm:px-6 md:px-8 border-t relative overflow-hidden"
+             style="background:var(--s0); border-color:var(--s4);">
+      
+      <!-- Decorative background blur -->
+      <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-[400px] opacity-10 pointer-events-none"
+           style="background: radial-gradient(circle, var(--primary) 0%, transparent 70%); filter: blur(80px);"></div>
+
+      <div class="max-w-5xl mx-auto flex flex-col gap-16 relative z-10">
+        
+        <!-- Header -->
+        <div class="text-center max-w-3xl mx-auto">
+          <h2 class="text-3xl sm:text-5xl font-bold tracking-tight mb-6" style="color:var(--t1)">
+            Free AI Prompt Token Cost Calculator & Usage Estimator
+          </h2>
+          <p class="text-lg sm:text-xl leading-relaxed" style="color:var(--t2)">
+            Stop guessing your API expenses. Our <strong>AI Prompt Token Cost Calculator</strong> helps developers, researchers, and businesses instantly forecast pricing for their LLM workloads.
+          </p>
+        </div>
+
+        <!-- Features Grid -->
+        <div class="grid md:grid-cols-3 gap-6">
+          <!-- Card 1 -->
+          <div class="p-8 rounded-3xl border transition-all duration-300 hover:-translate-y-1 hover:shadow-lg group"
+               style="background:var(--s1); border-color:var(--s4);">
+            <div class="w-14 h-14 rounded-2xl mb-6 flex items-center justify-center transition-colors border"
+                 style="background:var(--s2); border-color:var(--s4); color:var(--primary);">
+              <span class="material-symbols-outlined text-2xl group-hover:scale-110 transition-transform duration-300">account_balance_wallet</span>
+            </div>
+            <h3 class="text-xl font-bold mb-3" style="color:var(--t1)">Budget Management</h3>
+            <p class="leading-relaxed" style="color:var(--t3)">
+              Prevent unexpected API billing surprises by accurately forecasting your <strong>token usage calculator</strong> needs.
+            </p>
+          </div>
+          <!-- Card 2 -->
+          <div class="p-8 rounded-3xl border transition-all duration-300 hover:-translate-y-1 hover:shadow-lg group"
+               style="background:var(--s1); border-color:var(--s4);">
+            <div class="w-14 h-14 rounded-2xl mb-6 flex items-center justify-center transition-colors border"
+                 style="background:var(--s2); border-color:var(--s4); color:var(--primary);">
+              <span class="material-symbols-outlined text-2xl group-hover:scale-110 transition-transform duration-300">compare_arrows</span>
+            </div>
+            <h3 class="text-xl font-bold mb-3" style="color:var(--t1)">Model Comparison</h3>
+            <p class="leading-relaxed" style="color:var(--t3)">
+              Compare <strong>LLM cost calculator</strong> metrics between providers to find the most cost-effective solution.
+            </p>
+          </div>
+          <!-- Card 3 -->
+          <div class="p-8 rounded-3xl border transition-all duration-300 hover:-translate-y-1 hover:shadow-lg group"
+               style="background:var(--s1); border-color:var(--s4);">
+            <div class="w-14 h-14 rounded-2xl mb-6 flex items-center justify-center transition-colors border"
+                 style="background:var(--s2); border-color:var(--s4); color:var(--primary);">
+              <span class="material-symbols-outlined text-2xl group-hover:scale-110 transition-transform duration-300">tune</span>
+            </div>
+            <h3 class="text-xl font-bold mb-3" style="color:var(--t1)">Prompt Optimization</h3>
+            <p class="leading-relaxed" style="color:var(--t3)">
+              Analyze how prompt length impacts the <strong>prompt cost calculator</strong> output to engineer efficient prompts.
+            </p>
+          </div>
+        </div>
+
+        <!-- Two Column Section -->
+        <div class="grid md:grid-cols-2 gap-12 lg:gap-20 items-center mt-4">
+          <div>
+            <h3 class="text-3xl font-bold mb-6" style="color:var(--t1)">Precision and Accuracy</h3>
+            <p class="mb-5 leading-relaxed text-lg" style="color:var(--t2)">
+              Our <strong>free AI token counter</strong> uses sophisticated tokenization algorithms like OpenAI's <code>tiktoken</code> to ensure the token count perfectly matches your API billing.
+            </p>
+            <p class="leading-relaxed text-lg" style="color:var(--t2)">
+              Paste your text into the <strong>ai token calculator</strong>, select a model, and instantly multiply the input and estimated output tokens by official pricing.
+            </p>
+          </div>
+          <div class="p-8 sm:p-10 rounded-[2rem] border relative overflow-hidden shadow-xl"
+               style="background:var(--s1); border-color:var(--s4);">
+            <div class="absolute top-0 right-0 w-64 h-64 opacity-10 pointer-events-none"
+                 style="background: radial-gradient(circle, var(--primary) 0%, transparent 70%);"></div>
+            <h4 class="text-xl font-bold mb-8 relative z-10" style="color:var(--t1)">Supported AI Models</h4>
+            <ul class="space-y-6 relative z-10">
+              <li class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background:var(--s2); color:var(--primary)">
+                  <span class="material-symbols-outlined text-[20px]">check</span>
+                </div>
+                <span class="text-lg" style="color:var(--t2)"><strong>OpenAI:</strong> GPT-4o, GPT-4 Turbo, GPT-3.5</span>
+              </li>
+              <li class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background:var(--s2); color:var(--primary)">
+                  <span class="material-symbols-outlined text-[20px]">check</span>
+                </div>
+                <span class="text-lg" style="color:var(--t2)"><strong>Anthropic:</strong> Claude 3.5 Sonnet, Opus, Haiku</span>
+              </li>
+              <li class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background:var(--s2); color:var(--primary)">
+                  <span class="material-symbols-outlined text-[20px]">check</span>
+                </div>
+                <span class="text-lg" style="color:var(--t2)"><strong>Google:</strong> Gemini 1.5 Pro & Flash</span>
+              </li>
+              <li class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background:var(--s2); color:var(--primary)">
+                  <span class="material-symbols-outlined text-[20px]">check</span>
+                </div>
+                <span class="text-lg" style="color:var(--t2)"><strong>Open Source:</strong> Llama 3, Mistral, and more</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- CTA Banner -->
+        <div class="relative rounded-[2.5rem] overflow-hidden border p-10 sm:p-14 text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-8 my-8"
+             style="background:var(--s1); border-color:var(--s4);">
+          <!-- Glassmorphic gradient background -->
+          <div class="absolute inset-0 opacity-[0.08] pointer-events-none" style="background: linear-gradient(135deg, var(--primary), transparent);"></div>
+          
+          <div class="relative z-10 max-w-2xl">
+            <h3 class="text-3xl sm:text-4xl font-bold mb-4" style="color:var(--t1)">Estimate Your API Bill Today</h3>
+            <p class="text-xl mb-0 leading-relaxed" style="color:var(--t2)">
+              Without an <strong>accurate token counter</strong>, scaling an AI application can quickly become a financial liability.
+            </p>
+          </div>
+          <a href="#workspace" 
+             class="relative z-10 shrink-0 inline-flex items-center justify-center px-8 py-4 rounded-2xl font-bold text-white transition-all hover:scale-105 active:scale-95 shadow-lg group" 
+             style="background:var(--primary); box-shadow: 0 8px 24px rgba(var(--primary-rgb), 0.25);">
+             Start Calculating
+             <span class="material-symbols-outlined ml-2 text-[20px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+          </a>
+        </div>
+
+        <!-- FAQ Section (Accordion) -->
+        <div class="max-w-3xl mx-auto w-full">
+          <div class="text-center mb-10">
+            <h2 class="text-3xl sm:text-4xl font-bold mb-4" style="color:var(--t1)">Frequently Asked Questions</h2>
+            <p class="text-lg" style="color:var(--t2)">Everything you need to know about AI tokens and costs.</p>
+          </div>
+          
+          <div class="space-y-4">
+            <!-- FAQ 1 -->
+            <details class="group rounded-3xl border transition-all duration-300 [&_summary::-webkit-details-marker]:hidden"
+                     style="background:var(--s1); border-color:var(--s4);">
+              <summary class="flex items-center justify-between cursor-pointer p-6 sm:p-8 font-bold text-lg list-none" style="color:var(--t1)">
+                <span>What is an AI token?</span>
+                <div class="w-10 h-10 shrink-0 rounded-full flex items-center justify-center transition-colors group-hover:bg-opacity-80" style="background:var(--s2); color:var(--t2)">
+                  <span class="material-symbols-outlined transition-transform duration-300 group-open:rotate-180">expand_more</span>
+                </div>
+              </summary>
+              <div class="px-6 sm:px-8 pb-8 pt-0 leading-relaxed text-base" style="color:var(--t3)">
+                <p>In AI, a token is a chunk of text that the model reads or writes. A token can be as short as one character or as long as one word. As a general rule of thumb in English, 1 token is roughly equivalent to 4 characters or 0.75 words.</p>
+              </div>
+            </details>
+            
+            <!-- FAQ 2 -->
+            <details class="group rounded-3xl border transition-all duration-300 [&_summary::-webkit-details-marker]:hidden"
+                     style="background:var(--s1); border-color:var(--s4);">
+              <summary class="flex items-center justify-between cursor-pointer p-6 sm:p-8 font-bold text-lg list-none" style="color:var(--t1)">
+                <span>Is this AI prompt token cost calculator free to use?</span>
+                <div class="w-10 h-10 shrink-0 rounded-full flex items-center justify-center transition-colors group-hover:bg-opacity-80" style="background:var(--s2); color:var(--t2)">
+                  <span class="material-symbols-outlined transition-transform duration-300 group-open:rotate-180">expand_more</span>
+                </div>
+              </summary>
+              <div class="px-6 sm:px-8 pb-8 pt-0 leading-relaxed text-base" style="color:var(--t3)">
+                <p>Yes! Our <strong>free AI token counter</strong> is completely free to use. There are no limits on how many times you can calculate your prompt costs.</p>
+              </div>
+            </details>
+
+            <!-- FAQ 3 -->
+            <details class="group rounded-3xl border transition-all duration-300 [&_summary::-webkit-details-marker]:hidden"
+                     style="background:var(--s1); border-color:var(--s4);">
+              <summary class="flex items-center justify-between cursor-pointer p-6 sm:p-8 font-bold text-lg list-none" style="color:var(--t1)">
+                <span>How accurate is the token counter?</span>
+                <div class="w-10 h-10 shrink-0 rounded-full flex items-center justify-center transition-colors group-hover:bg-opacity-80" style="background:var(--s2); color:var(--t2)">
+                  <span class="material-symbols-outlined transition-transform duration-300 group-open:rotate-180">expand_more</span>
+                </div>
+              </summary>
+              <div class="px-6 sm:px-8 pb-8 pt-0 leading-relaxed text-base" style="color:var(--t3)">
+                <p>Our tool uses the same tokenization methods (like OpenAI's tiktoken) used by the official APIs. This makes our <strong>accurate token counter</strong> highly reliable for estimating your actual billing costs.</p>
+              </div>
+            </details>
+
+            <!-- FAQ 4 -->
+            <details class="group rounded-3xl border transition-all duration-300 [&_summary::-webkit-details-marker]:hidden"
+                     style="background:var(--s1); border-color:var(--s4);">
+              <summary class="flex items-center justify-between cursor-pointer p-6 sm:p-8 font-bold text-lg list-none" style="color:var(--t1)">
+                <span>Why are input and output costs different?</span>
+                <div class="w-10 h-10 shrink-0 rounded-full flex items-center justify-center transition-colors group-hover:bg-opacity-80" style="background:var(--s2); color:var(--t2)">
+                  <span class="material-symbols-outlined transition-transform duration-300 group-open:rotate-180">expand_more</span>
+                </div>
+              </summary>
+              <div class="px-6 sm:px-8 pb-8 pt-0 leading-relaxed text-base" style="color:var(--t3)">
+                <p>AI providers charge different rates for the text you send them (input/prompt) versus the text the model generates (output/completion). Output tokens require more computational power to generate, so they are typically more expensive than input tokens.</p>
+              </div>
+            </details>
+
+            <!-- FAQ 5 -->
+            <details class="group rounded-3xl border transition-all duration-300 [&_summary::-webkit-details-marker]:hidden"
+                     style="background:var(--s1); border-color:var(--s4);">
+              <summary class="flex items-center justify-between cursor-pointer p-6 sm:p-8 font-bold text-lg list-none" style="color:var(--t1)">
+                <span>Does the calculator support the latest Claude and GPT models?</span>
+                <div class="w-10 h-10 shrink-0 rounded-full flex items-center justify-center transition-colors group-hover:bg-opacity-80" style="background:var(--s2); color:var(--t2)">
+                  <span class="material-symbols-outlined transition-transform duration-300 group-open:rotate-180">expand_more</span>
+                </div>
+              </summary>
+              <div class="px-6 sm:px-8 pb-8 pt-0 leading-relaxed text-base" style="color:var(--t3)">
+                <p>Yes, we constantly update our pricing database to ensure the <strong>gpt token calculator</strong> and <strong>claude token cost</strong> estimator reflect the most current API pricing, including models like GPT-4o and Claude 3.5 Sonnet.</p>
+              </div>
+            </details>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── Site pages (MPA internal links) ─────────────────────────── -->
+    <section class="py-10 sm:py-12 px-4 sm:px-6 md:px-8 border-t" style="background:var(--s2); border-color:var(--s4)">
+      <div class="max-w-5xl mx-auto flex flex-col gap-6">
+        <h2 class="text-xl sm:text-2xl font-bold text-center" style="color:var(--t1)">Company & Legal</h2>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+          {[
+            { href: '/about', label: 'About Us', icon: 'groups' },
+            { href: '/contact', label: 'Contact Us', icon: 'mail' },
+            { href: '/privacy-policy', label: 'Privacy Policy', icon: 'shield' },
+            { href: '/terms-and-conditions', label: 'Terms & Conditions', icon: 'gavel' },
+          ].map((link) => (
+            <a href={link.href}
+               class="flex flex-col items-center gap-2 p-4 sm:p-5 rounded-2xl border text-center transition-all hover:-translate-y-0.5"
+               style="background:var(--s1); border-color:var(--s4); color:var(--t2)">
+              <span class="material-symbols-outlined text-[22px]" style="color:var(--primary)">{link.icon}</span>
+              <span class="font-mono text-[10px] sm:text-[11px] uppercase tracking-widest">{link.label}</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <Footer />
+  </div>
+
+</MainLayout>
+
+<!-- ── Client-side calculator ─────────────────────────────────────────────── -->
+<script>
+  import { init } from '../scripts/calculator.js';
+  init();
+</script>

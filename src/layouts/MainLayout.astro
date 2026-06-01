@@ -1,0 +1,118 @@
+---
+/**
+ * MainLayout.astro — Root HTML shell used by every page.
+ */
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  noindex?: boolean;
+}
+
+const {
+  title = 'TokenCalc AI — Prompt Token & Cost Calculator',
+  description = 'Calculate exact token counts and projected API costs across all major AI models. Free, instant, 100% client-side.',
+  noindex = false,
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+
+    <!-- Google tag (gtag.js) -->
+    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-RVEME7ZZ1R"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-RVEME7ZZ1R');
+    </script>
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <meta name="theme-color" content="#f5fafc" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0d1117" media="(prefers-color-scheme: dark)" />
+
+    <!-- Canonical & JSON-LD -->
+    <link rel="canonical" href={canonicalURL} />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "AI Prompt Token Cost Calculator",
+        "operatingSystem": "WebBrowser",
+        "applicationCategory": "DeveloperApplication",
+        "description": "An accurate online token cost estimator and prompt token counter for calculating API usage costs across leading AI models like GPT-4, Claude, and Gemini.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "featureList": [
+          "Accurate token counter",
+          "Live API cost estimation",
+          "Volume estimation for bulk processing"
+        ]
+      }
+    </script>
+
+    <!-- Favicon & App Icons -->
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="TOKEN CAL" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <!-- Open Graph -->
+    <meta property="og:title"       content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type"        content="website" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta property="og:url"         content={canonicalURL} />
+    <meta property="og:image"       content="/logo.png" />
+    <meta property="og:image:width"  content="512" />
+    <meta property="og:image:height" content="512" />
+
+    <!-- Twitter / X Card -->
+    <meta name="twitter:card"        content="summary_large_image" />
+    <meta name="twitter:title"       content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image"       content="/logo.png" />
+
+    <title>{title}</title>
+    <!-- Fonts preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Material Symbols (icon font) -->
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" />
+
+    <!--
+      ── Blocking theme script ───────────────────────────────────────────────
+      Runs before paint so there is ZERO flash-of-wrong-theme.
+      Light is the default; dark only applies when the user has explicitly
+      chosen it via the toggle (stored in localStorage as "dark").
+    -->
+    <script is:inline>
+      (function () {
+        try {
+          if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark');
+          }
+          // No else: light is the default — class is absent by default.
+        } catch (_) {}
+      })();
+    </script>
+  </head>
+
+  <body class="min-h-screen flex flex-col">
+    <slot />
+  </body>
+</html>

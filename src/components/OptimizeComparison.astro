@@ -1,0 +1,535 @@
+---
+/**
+ * OptimizeComparison.astro — Side-by-side original vs optimized prompt panel
+ */
+---
+
+<div
+  id="optimizeComparison"
+  class="optimize-comparison hidden flex-col gap-4 w-full"
+  aria-live="polite"
+  aria-label="Prompt optimization comparison"
+>
+  <!-- Savings summary -->
+  <div
+    class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-4 py-3 rounded-xl border"
+    style="background:var(--primary-tint); border-color:var(--primary-border)"
+  >
+    <div class="flex items-center gap-2">
+      <span class="material-symbols-outlined text-[20px]" style="color:var(--primary)">savings</span>
+      <span class="font-mono text-xs sm:text-sm font-semibold" style="color:var(--t1)">
+        Token savings
+      </span>
+    </div>
+    <div class="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-xs sm:text-sm tabular-nums">
+      <span style="color:var(--t3)">
+        Before: <strong id="optimizeTokensBefore" style="color:var(--t2)">—</strong>
+      </span>
+      <span style="color:var(--t3)">
+        After: <strong id="optimizeTokensAfter" style="color:var(--primary)">—</strong>
+      </span>
+      <span
+        id="optimizeSavingsPct"
+        class="px-2 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wide"
+        style="background:var(--s1); color:var(--primary); border:1px solid var(--primary-border)"
+      >
+        — saved
+      </span>
+    </div>
+  </div>
+
+  <p class="font-mono text-[10px] sm:text-[11px] leading-relaxed px-0.5" style="color:var(--t3)">
+    This is a heuristic optimization. For best results, review manually.
+  </p>
+
+  <!-- Side-by-side panels -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="card rounded-xl overflow-hidden flex flex-col min-h-[200px]">
+      <div
+        class="px-4 py-2.5 border-b font-mono text-[10px] uppercase tracking-widest font-semibold"
+        style="border-color:var(--s4); background:var(--s2); color:var(--t3)"
+      >
+        Original
+      </div>
+      <pre
+        id="optimizeOriginalText"
+        class="flex-1 p-4 m-0 font-mono text-xs sm:text-sm leading-relaxed overflow-auto max-h-[280px] whitespace-pre-wrap break-words"
+        style="color:var(--t2)"
+      ></pre>
+    </div>
+
+    <div
+      class="card rounded-xl overflow-hidden flex flex-col min-h-[200px] border"
+      style="border-color:var(--primary-border)"
+    >
+      <div
+        class="px-4 py-2.5 border-b font-mono text-[10px] uppercase tracking-widest font-semibold flex items-center gap-2"
+        style="border-color:var(--primary-border); background:var(--primary-tint); color:var(--primary)"
+      >
+        <span class="material-symbols-outlined text-[16px]">auto_awesome</span>
+        Optimized
+      </div>
+      <pre
+        id="optimizeResultText"
+        class="flex-1 p-4 m-0 font-mono text-xs sm:text-sm leading-relaxed overflow-auto max-h-[280px] whitespace-pre-wrap break-words"
+        style="color:var(--t1)"
+      ></pre>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-3">
+    <button
+      type="button"
+      id="replaceOptimizedBtn"
+      class="opt-action-btn opt-replace-btn group"
+    >
+      <span class="opt-action-icon" aria-hidden="true">
+        <span class="material-symbols-outlined opt-icon-default">swap_horiz</span>
+        <span class="material-symbols-outlined opt-icon-success">check_circle</span>
+      </span>
+      <span class="opt-action-label">Replace with Optimized Version</span>
+    </button>
+    <button
+      type="button"
+      id="copyOptimizedBtn"
+      class="opt-action-btn opt-copy-btn group"
+    >
+      <span class="opt-action-icon" aria-hidden="true">
+        <span class="material-symbols-outlined opt-icon-default">content_copy</span>
+        <span class="material-symbols-outlined opt-icon-success">check_circle</span>
+      </span>
+      <span class="opt-action-label">Copy Optimized Prompt</span>
+    </button>
+    <button
+      type="button"
+      id="dismissOptimizeBtn"
+      class="opt-action-btn opt-dismiss-btn group sm:ml-auto"
+    >
+      <span class="opt-action-icon" aria-hidden="true">
+        <span class="material-symbols-outlined opt-icon-default">close</span>
+        <span class="material-symbols-outlined opt-icon-success">check_circle</span>
+      </span>
+      <span class="opt-action-label">Dismiss</span>
+    </button>
+  </div>
+</div>
+
+<style>
+  .optimize-comparison.is-exiting {
+    animation: opt-panel-out 0.22s ease forwards;
+    pointer-events: none;
+  }
+
+  @keyframes opt-panel-out {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+  }
+
+  .opt-action-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0 1rem;
+    height: 2.5rem;
+    border-radius: 0.5rem;
+    font-family: var(--f-mono);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    overflow: hidden;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition:
+      transform 0.22s cubic-bezier(0.34, 1.4, 0.64, 1),
+      box-shadow 0.22s ease,
+      border-color 0.22s ease,
+      background 0.22s ease,
+      color 0.22s ease;
+  }
+
+  .opt-action-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    pointer-events: none;
+  }
+
+  .opt-action-btn:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+
+  .opt-action-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.125rem;
+    height: 1.125rem;
+    flex-shrink: 0;
+  }
+
+  .opt-action-icon .material-symbols-outlined {
+    position: absolute;
+    font-size: 18px;
+    transition:
+      opacity 0.2s ease,
+      transform 0.28s cubic-bezier(0.34, 1.4, 0.64, 1);
+  }
+
+  .opt-icon-default {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+
+  .opt-icon-success {
+    opacity: 0;
+    transform: scale(0.6) rotate(-12deg);
+    font-variation-settings: 'FILL' 1, 'wght' 600;
+  }
+
+  .opt-action-label {
+    transition: transform 0.22s cubic-bezier(0.34, 1.4, 0.64, 1);
+  }
+
+  /* Primary — Replace */
+  .opt-replace-btn {
+    color: #fff;
+    background: var(--primary);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  }
+
+  .opt-replace-btn::before {
+    background: linear-gradient(
+      120deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.22) 50%,
+      transparent 100%
+    );
+    transform: translateX(-120%);
+  }
+
+  .opt-replace-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow:
+      0 4px 14px color-mix(in srgb, var(--primary) 35%, transparent),
+      0 2px 4px rgba(0, 0, 0, 0.06);
+    background: var(--primary-hover);
+  }
+
+  .opt-replace-btn:hover:not(:disabled)::before {
+    opacity: 1;
+    animation: opt-shimmer 0.65s ease forwards;
+  }
+
+  .opt-replace-btn:hover:not(:disabled) .opt-icon-default {
+    transform: translateX(2px) scale(1.08);
+  }
+
+  .opt-replace-btn:hover:not(:disabled) .opt-action-label {
+    transform: translateX(1px);
+  }
+
+  /* Secondary — Copy */
+  .opt-copy-btn {
+    color: var(--t2);
+    background: var(--s1);
+    border-color: var(--s4);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  }
+
+  .opt-copy-btn .opt-icon-default {
+    color: var(--t3);
+  }
+
+  .opt-copy-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    color: var(--primary);
+    border-color: var(--primary-border);
+    background: var(--primary-tint);
+    box-shadow:
+      0 4px 12px color-mix(in srgb, var(--primary) 18%, transparent),
+      0 1px 2px rgba(0, 0, 0, 0.04);
+  }
+
+  .opt-copy-btn:hover:not(:disabled) .opt-icon-default {
+    color: var(--primary);
+    transform: scale(1.12) rotate(-6deg);
+  }
+
+  .opt-copy-btn:hover:not(:disabled) .opt-action-label {
+    transform: translateX(1px);
+  }
+
+  /* Success flash (both buttons) */
+  .opt-action-btn.is-success {
+    animation: opt-success-pop 0.45s cubic-bezier(0.34, 1.4, 0.64, 1);
+  }
+
+  .opt-action-btn.is-success .opt-icon-default {
+    opacity: 0;
+    transform: scale(0.5) rotate(12deg);
+  }
+
+  .opt-action-btn.is-success .opt-icon-success {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+    color: inherit;
+  }
+
+  .opt-replace-btn.is-success {
+    background: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-tint);
+  }
+
+  .opt-copy-btn.is-success {
+    border-color: var(--primary-border);
+    background: var(--primary-tint);
+    color: var(--primary);
+  }
+
+  /* Tertiary — Dismiss */
+  .opt-dismiss-btn {
+    color: var(--t3);
+    background: transparent;
+    border-color: transparent;
+    font-weight: 600;
+  }
+
+  .opt-dismiss-btn .opt-icon-default {
+    color: var(--t4);
+  }
+
+  .opt-dismiss-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    color: var(--t2);
+    border-color: var(--s4);
+    background: var(--s2);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+  }
+
+  .opt-dismiss-btn:hover:not(:disabled) .opt-icon-default {
+    color: var(--t2);
+    transform: scale(1.1) rotate(90deg);
+  }
+
+  .opt-dismiss-btn:hover:not(:disabled) .opt-action-label {
+    transform: translateX(-1px);
+  }
+
+  .opt-dismiss-btn:active:not(:disabled) .opt-icon-default {
+    transform: scale(0.95) rotate(90deg);
+  }
+
+  .opt-dismiss-btn.is-success {
+    color: var(--t2);
+    border-color: var(--s4);
+    background: var(--s2);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--s4) 60%, transparent);
+  }
+
+  .opt-dismiss-btn.is-success .opt-icon-success {
+    color: var(--t2);
+  }
+
+  @keyframes opt-shimmer {
+    from { transform: translateX(-120%); }
+    to { transform: translateX(120%); }
+  }
+
+  @keyframes opt-success-pop {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.04); }
+    100% { transform: scale(1); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .optimize-comparison.is-exiting {
+      animation: none;
+      opacity: 0;
+    }
+
+    .opt-action-btn,
+    .opt-action-btn::before,
+    .opt-action-icon .material-symbols-outlined,
+    .opt-action-label {
+      transition: none;
+      animation: none !important;
+    }
+    .opt-replace-btn:hover:not(:disabled),
+    .opt-copy-btn:hover:not(:disabled),
+    .opt-dismiss-btn:hover:not(:disabled) {
+      transform: none;
+    }
+    .opt-replace-btn:hover:not(:disabled)::before {
+      opacity: 0;
+    }
+  }
+</style>
+
+<script>
+  import { optimizePrompt } from '../scripts/promptOptimizer.js';
+  import { getTokenCount } from '../scripts/calculator.js';
+  import { toast } from '../scripts/toast';
+
+  let lastOptimized = '';
+  const SUCCESS_MS = 2000;
+
+  function flashButtonSuccess(
+    btn: HTMLButtonElement | null,
+    label?: string,
+    duration = SUCCESS_MS,
+    onComplete?: () => void,
+  ) {
+    if (!btn) return;
+    const labelEl = btn.querySelector('.opt-action-label');
+    const origLabel = labelEl?.textContent ?? '';
+    if (label && labelEl) labelEl.textContent = label;
+    btn.classList.add('is-success');
+    btn.disabled = true;
+    window.setTimeout(() => {
+      btn.classList.remove('is-success');
+      btn.disabled = false;
+      if (labelEl && origLabel) labelEl.textContent = origLabel;
+      onComplete?.();
+    }, duration);
+  }
+
+  function fmtInt(n: number) {
+    return new Intl.NumberFormat('en-US').format(n);
+  }
+
+  function pctSaved(before: number, after: number) {
+    if (before <= 0) return 0;
+    return Math.max(0, Math.round(((before - after) / before) * 100));
+  }
+
+  function showComparison(original: string, optimized: string) {
+    const panel = document.getElementById('optimizeComparison');
+    const beforeEl = document.getElementById('optimizeTokensBefore');
+    const afterEl = document.getElementById('optimizeTokensAfter');
+    const pctEl = document.getElementById('optimizeSavingsPct');
+    const origText = document.getElementById('optimizeOriginalText');
+    const resultText = document.getElementById('optimizeResultText');
+
+    if (!panel || !beforeEl || !afterEl || !pctEl || !origText || !resultText) return;
+
+    const before = getTokenCount(original);
+    const after = getTokenCount(optimized);
+    const saved = pctSaved(before, after);
+
+    beforeEl.textContent = fmtInt(before);
+    afterEl.textContent = fmtInt(after);
+    pctEl.textContent = saved > 0 ? `${saved}% saved` : 'no change';
+    origText.textContent = original;
+    resultText.textContent = optimized;
+
+    panel.classList.remove('hidden');
+    panel.classList.add('flex');
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function hideComparison() {
+    const panel = document.getElementById('optimizeComparison');
+    const dismissBtn = document.getElementById('dismissOptimizeBtn') as HTMLButtonElement | null;
+    if (!panel) return;
+    panel.classList.add('hidden');
+    panel.classList.remove('flex');
+    panel.classList.remove('is-exiting');
+    lastOptimized = '';
+    dismissBtn?.classList.remove('is-success');
+    dismissBtn && (dismissBtn.disabled = false);
+    const dismissLabel = dismissBtn?.querySelector('.opt-action-label');
+    if (dismissLabel) dismissLabel.textContent = 'Dismiss';
+  }
+
+  function initOptimizeFeature() {
+    const btn = document.getElementById('optimizePromptBtn');
+    const replaceBtn = document.getElementById('replaceOptimizedBtn');
+    const copyBtn = document.getElementById('copyOptimizedBtn');
+    const dismissBtn = document.getElementById('dismissOptimizeBtn');
+
+    if (!btn || btn.getAttribute('data-optimize-feature-bound')) return;
+    btn.setAttribute('data-optimize-feature-bound', 'true');
+
+    btn.addEventListener('click', async () => {
+      const targetId = (btn as HTMLElement).dataset.target || 'promptInput';
+      const input = document.getElementById(targetId) as HTMLTextAreaElement | null;
+      if (!input?.value.trim()) {
+        toast.info('Enter a prompt to optimize');
+        return;
+      }
+
+      const original = input.value;
+      btn.setAttribute('aria-busy', 'true');
+      (btn as HTMLButtonElement).disabled = true;
+
+      await new Promise(r => setTimeout(r, 120));
+
+      try {
+        const optimized = optimizePrompt(original);
+        lastOptimized = optimized;
+
+        if (optimized === original.trim()) {
+          toast.info('Prompt is already concise — no changes applied');
+        } else {
+          toast.success('Prompt optimized — review the comparison below');
+        }
+
+        showComparison(original, optimized);
+      } finally {
+        btn.setAttribute('aria-busy', 'false');
+        (btn as HTMLButtonElement).disabled = !input.value.trim();
+      }
+    });
+
+    replaceBtn?.addEventListener('click', () => {
+      const input = document.getElementById('promptInput') as HTMLTextAreaElement | null;
+      if (!input || !lastOptimized) return;
+      flashButtonSuccess(replaceBtn as HTMLButtonElement, 'Replaced!');
+      input.value = lastOptimized;
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      input.focus();
+      window.setTimeout(() => hideComparison(), SUCCESS_MS);
+      toast.success('Replaced with optimized prompt');
+    });
+
+    copyBtn?.addEventListener('click', async () => {
+      if (!lastOptimized) return;
+      try {
+        await navigator.clipboard.writeText(lastOptimized);
+        flashButtonSuccess(copyBtn as HTMLButtonElement, 'Copied!');
+        toast.success('Optimized prompt copied');
+      } catch {
+        toast.error('Could not copy to clipboard');
+      }
+    });
+
+    dismissBtn?.addEventListener('click', () => {
+      const panel = document.getElementById('optimizeComparison');
+      flashButtonSuccess(dismissBtn as HTMLButtonElement, 'Dismissed!', 450);
+      if (panel) {
+        window.setTimeout(() => {
+          panel.classList.add('is-exiting');
+          window.setTimeout(hideComparison, 220);
+        }, 280);
+      } else {
+        hideComparison();
+      }
+    });
+  }
+
+  initOptimizeFeature();
+  document.addEventListener('astro:page-load', initOptimizeFeature);
+</script>
