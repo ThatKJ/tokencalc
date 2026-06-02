@@ -39,7 +39,7 @@
   </div>
 
   <p class="font-mono text-[10px] sm:text-[11px] leading-relaxed px-0.5" style="color:var(--t3)">
-    This is a heuristic optimization. For best results, review manually.
+    Max-compression applied. Review before use.
   </p>
 
   <!-- Side-by-side panels -->
@@ -379,7 +379,7 @@
 </style>
 
 <script>
-  import { optimizePrompt } from '../scripts/promptOptimizer.js';
+  import { compressPrompt } from '../scripts/promptCompressor.js';
   import { getTokenCount } from '../scripts/calculator.js';
   import { toast } from '../scripts/toast';
 
@@ -455,44 +455,50 @@
   }
 
   function initOptimizeFeature() {
-    const btn = document.getElementById('optimizePromptBtn');
     const replaceBtn = document.getElementById('replaceOptimizedBtn');
     const copyBtn = document.getElementById('copyOptimizedBtn');
     const dismissBtn = document.getElementById('dismissOptimizeBtn');
 
-    if (!btn || btn.getAttribute('data-optimize-feature-bound')) return;
-    btn.setAttribute('data-optimize-feature-bound', 'true');
+    if (document.getElementById('optimizePromptBtn')?.getAttribute('data-bound')) return;
 
-    btn.addEventListener('click', async () => {
-      const targetId = (btn as HTMLElement).dataset.target || 'promptInput';
-      const input = document.getElementById(targetId) as HTMLTextAreaElement | null;
-      if (!input?.value.trim()) {
-        toast.info('Enter a prompt to optimize');
-        return;
-      }
+    function bindClick(btnId: string) {
+      const btn = document.getElementById(btnId);
+      if (!btn || btn.getAttribute('data-bound')) return;
+      btn.setAttribute('data-bound', 'true');
 
-      const original = input.value;
-      btn.setAttribute('aria-busy', 'true');
-      (btn as HTMLButtonElement).disabled = true;
-
-      await new Promise(r => setTimeout(r, 120));
-
-      try {
-        const optimized = optimizePrompt(original);
-        lastOptimized = optimized;
-
-        if (optimized === original.trim()) {
-          toast.info('Prompt is already concise — no changes applied');
-        } else {
-          toast.success('Prompt optimized — review the comparison below');
+      btn.addEventListener('click', async () => {
+        const targetId = (btn as HTMLElement).dataset.target || 'promptInput';
+        const input = document.getElementById(targetId) as HTMLTextAreaElement | null;
+        if (!input?.value.trim()) {
+          toast.info('Enter a prompt to optimize');
+          return;
         }
 
-        showComparison(original, optimized);
-      } finally {
-        btn.setAttribute('aria-busy', 'false');
-        (btn as HTMLButtonElement).disabled = !input.value.trim();
-      }
-    });
+        const original = input.value;
+        btn.setAttribute('aria-busy', 'true');
+        (btn as HTMLButtonElement).disabled = true;
+
+        await new Promise(r => setTimeout(r, 120));
+
+        try {
+          const processed = compressPrompt(original);
+          lastOptimized = processed;
+
+          if (processed === original.trim()) {
+            toast.info('Prompt is already concise — no changes applied');
+          } else {
+            toast.success('Prompt optimized — review the comparison below');
+          }
+
+          showComparison(original, processed);
+        } finally {
+          btn.setAttribute('aria-busy', 'false');
+          (btn as HTMLButtonElement).disabled = !input.value.trim();
+        }
+      });
+    }
+
+    bindClick('optimizePromptBtn');
 
     replaceBtn?.addEventListener('click', () => {
       const input = document.getElementById('promptInput') as HTMLTextAreaElement | null;
